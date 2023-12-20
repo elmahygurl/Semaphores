@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <signal.h>
 #define N 6
-#define msgsNum 5
 #define t1 10
 //ANSI escape codes for colorful console output
 #define KRED  "\x1B[31m"
@@ -28,8 +27,12 @@ void* countingg(void *args)
 
 }
 
+
 void* monitoringg(void *args)
 {
+    while (1) {
+        // Sleep for the specified time interval t1
+        sleep(t1);
     printf("\n%smMonitor tryna enter critical section\n",KBLU);
     sem_wait(&semCounter); // Lock the counter
     printf("\n%sDa5lna critical of mMonitor\n", KYEL);
@@ -37,6 +40,8 @@ void* monitoringg(void *args)
     count= 0; // Reset the counter
     printf("\n%sExiting critical section of mMonitor\n", KBLU);
     sem_post(&semCounter); // Unlock the counter
+
+    }
 }
 
 void intHandler(int dummy)
@@ -50,19 +55,25 @@ void intHandler(int dummy)
 
 
 
-
 int main()
 {
     signal(SIGINT, intHandler);
     pthread_t mMonitor, mCollector;
     pthread_t mCounter[N] ;
     sem_init(&semCounter, 0, 1);
-    pthread_create(&mMonitor,NULL,monitoringg,NULL);  /// gets the count of mCounter threads at time intervals of size t1 and resets counter
+    //pthread_create(&mMonitor,NULL,monitoringg,NULL);  /// gets the count of mCounter threads at time intervals of size t1 and resets counter
 
     for (int i=0; i<N; i++)
     {
         pthread_create(&mCounter[i],NULL,countingg,(void *) &i);
     }
+    pthread_join(mMonitor, NULL); // Wait for mMonitor to finish
 
+    for (int i = 0; i < N; i++)
+    {
+        pthread_join(mCounter[i], NULL); // Wait for mCounter threads to finish
+    }
+
+    return 0;
 
 }
