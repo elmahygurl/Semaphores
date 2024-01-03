@@ -12,3 +12,6 @@ The mCollector thread dequeues values from the buffer and processes them.
 ## Objective:
 1. Familiarizing with concurrent programming.
 2. Handling races, synchronization, and deadlock conditions
+
+##Sample Run 
+![image](https://github.com/elmahygurl/Semaphores/assets/97133077/50c8d99f-1bdb-491b-ac22-9d5c0442e771)
